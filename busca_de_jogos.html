@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loja de Games</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f4f4;
+    padding:30px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+h1{
+    margin-bottom:20px;
+}
+
+form{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:30px;
+}
+
+input,select{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+}
+
+button{
+    padding:10px 18px;
+    cursor:pointer;
+    border:none;
+    border-radius:5px;
+}
+
+.salvar{
+    background:#28a745;
+    color:white;
+}
+
+.editar{
+    background:#ffc107;
+}
+
+.excluir{
+    background:#dc3545;
+    color:white;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+}
+
+th{
+    background:#333;
+    color:white;
+}
+
+img{
+    width:80px;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>Loja de Games</h1>
+
+<form id="form">
+
+<input type="hidden" id="id">
+
+<input
+type="text"
+id="nome"
+placeholder="Nome do jogo"
+required>
+
+<input
+type="text"
+id="descricao"
+placeholder="Descrição">
+
+<input
+type="number"
+step="0.01"
+id="preco"
+placeholder="Preço">
+
+<input
+type="text"
+id="imagem"
+placeholder="URL da imagem">
+
+<select id="categoria">
+
+</select>
+
+<button class="salvar" type="submit">
+Salvar
+</button>
+
+</form>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Nome</th>
+<th>Categoria</th>
+<th>Preço</th>
+<th>Imagem</th>
+<th>Ações</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tabela">
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+const api="http://localhost:3000";
+
+carregarCategorias();
+listarProdutos();
+
+async function carregarCategorias(){
+
+    const resposta=await fetch(api+"/categorias");
+    const categorias=await resposta.json();
+
+    const select=document.getElementById("categoria");
+
+    select.innerHTML="";
+
+    categorias.forEach(cat=>{
+
+        select.innerHTML+=`
+        <option value="${cat.id}">
+            ${cat.nome}
+        </option>
+        `;
+
+    });
+
+}
+
+async function listarProdutos(){
+
+    const resposta=await fetch(api+"/produtos");
+
+    const produtos=await resposta.json();
+
+    const tabela=document.getElementById("tabela");
+
+    tabela.innerHTML="";
+
+    produtos.forEach(produto=>{
+
+        tabela.innerHTML+=`
+
+<tr>
+
+<td>${produto.id}</td>
+
+<td>${produto.nome}</td>
+
+<td>${produto.categoria}</td>
+
+<td>R$ ${Number(produto.preco).toFixed(2)}</td>
+
+<td>
+
+<img src="${produto.imagem}" onerror="this.src='https://placehold.co/80'">
+
+</td>
+
+<td>
+
+<button class="editar"
+onclick="editar(${produto.id})">
+
+Editar
+
+</button>
+
+<button class="excluir"
+onclick="excluir(${produto.id})">
+
+Excluir
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+    });
+
+}
+
+document.getElementById("form").addEventListener("submit",async(e)=>{
+
+    e.preventDefault();
+
+    const id=document.getElementById("id").value;
+
+    const produto={
+
+        nome:document.getElementById("nome").value,
+
+        descricao:document.getElementById("descricao").value,
+
+        preco:document.getElementById("preco").value,
+
+        imagem:document.getElementById("imagem").value,
+
+        categoria_id:document.getElementById("categoria").value
+
+    };
+
+    if(id==""){
+
+        await fetch(api+"/produtos",{
+
+            method:"POST",
+
+            headers:{
+
+                "Content-Type":"application/json"
+
+            },
+
+            body:JSON.stringify(produto)
+
+        });
+
+    }
+
+    else{
+
+        await fetch(api+"/produtos/"+id,{
+
+            method:"PUT",
+
+            headers:{
+
+                "Content-Type":"application/json"
+
+            },
+
+            body:JSON.stringify(produto)
+
+        });
+
+    }
+
+    document.getElementById("form").reset();
+
+    document.getElementById("id").value="";
+
+    listarProdutos();
+
+});
+
+async function editar(id){
+
+    const resposta=await fetch(api+"/produtos/"+id);
+
+    const produto=await resposta.json();
+
+    const p=produto[0];
+
+    document.getElementById("id").value=p.id;
+    document.getElementById("nome").value=p.nome;
+    document.getElementById("descricao").value=p.descricao;
+    document.getElementById("preco").value=p.preco;
+    document.getElementById("imagem").value=p.imagem;
+    document.getElementById("categoria").value=p.categoria_id;
+
+}
+
+async function excluir(id){
+
+    if(confirm("Deseja excluir este produto?")){
+
+        await fetch(api+"/produtos/"+id,{
+
+            method:"DELETE"
+
+        });
+
+        listarProdutos();
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
+```
