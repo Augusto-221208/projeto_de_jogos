@@ -1,1 +1,59 @@
 ###
+GET http://localhost:3000/categorias
+
+###
+
+GET http://localhost:3000/categorias
+
+###
+
+POST http://localhost:3000/categorias
+Content-Type: application/json
+
+{
+    "nome": "Estratégia"
+}
+
+###
+
+PUT http://localhost:3000/categorias
+Content-Type: application/json
+
+{
+    "nome": "Esportes"
+}
+
+###
+
+DELETE http://localhost:3000/categorias
+
+###
+GET http://localhost:3000/produtos
+
+
+GET http://localhost:3000/produtos
+
+###
+
+POST http://localhost:3000/produtos
+Content-Type: application/json
+
+{
+    "nome": "The Witcher 3",
+    "descricao": "RPG em mundo aberto",
+    "preco": 89.90,
+    "imagem": "https://placehold.co/300x400?text=The+Witcher+3",
+    "categoria_id": 5
+}
+###
+PUT http://localhost:3000/produtos
+Content-Type: application/json
+{
+    "nome": "The Witcher 3 Complete Edition",
+    "descricao": "RPG em mundo aberto com todas as DLCs",
+    "preco": 99.90,
+    "imagem": "https://placehold.co/300x400?text=The+Witcher+3",
+    "categoria_id": 5
+}
+###
+DELETE http://localhost:3000/produtos
