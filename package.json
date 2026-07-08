@@ -4,7 +4,7 @@
   "main": "serve.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon server.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +15,6 @@
     "express": "^5.2.1",
     "fastify": "^5.10.0",
     "mysql2": "^3.22.6",
-    "nodemon": "^3.1.14",
-    "pg": "^8.22.0"
+    "nodemon": "^3.1.14"
   }
 }
